@@ -1,0 +1,70 @@
+[h1]📖 About[/h1]
+A drop-in configuration SDK for Space Engineers mods featuring automatic config file creation, a synced server/client split, and an in-game menu, in just a few lines of code.
+
+[hr][/hr]
+[url=https://buymeacoffee.com/theegg][img]https://images.steamusercontent.com/ugc/17371321184724782676/B5B94F5951B962D52691ABB40A235073BD6DA1CB/?imw=256&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false[/img][/url]
+If this saved you time, you can [url=https://buymeacoffee.com/theegg]buy me a coffee[/url]. Entirely optional, always appreciated
+[hr][/hr]
+[h1]📖 Description[/h1]
+Config Manager is a standalone utility mod that acts as a configuration backend for other mods. A mod registers its settings (name, type, range, default, and scope) and gets back live, type-safe values. Config Manager handles the rest:
+[list]
+[*][b]Persistent storage[/b]: each mod's settings are saved to an xml file, server values in the world save's Storage folder (SpaceEngineers\Saves\[save id]\Testing\Storage\Config Manager_ConfigSdk\[config name].xml), per-player values in your local SpaceEngineers Storage folder
+[*][b]Server/client split[/b]: server settings sync to all players and are admin-only; client settings are per-player
+[*][b]In-game menu[/b]: edit everything from a clean settings panel (via Rich HUD Framework)
+[/list]
+
+Don't have it installed? Mods that use Config Manager simply fall back to their built-in defaults, so nothing breaks. It's purely additive.
+
+[hr][/hr]
+[h1]✨ Features[/h1]
+[list]
+[*]🧩 [b]Type-safe config[/b]: bool, int, float, double, string, each with optional min/max ranges
+[*]🌐 [b]Server ↔ Client sync[/b]: server-authoritative, admin-gated edits, automatic multiplayer sync
+[*]🖥️ [b][url=https://steamcommunity.com/sharedfiles/filedetails/?id=1965654081]Rich HUD[/url] integration[/b]: edit settings in-game from the F2 menu (optional, not required)
+[*]🔁 [b]Live reload[/b]: non-restart values apply instantly; [b]/configreload[/b] re-reads files on demand
+[*]♻️ [b]Restart-aware[/b]: values can be flagged "restart required"; the menu marks them and warns on change
+[*]📂 [b]Readable XML files[/b]: one file per mod, with separate Server and Client sections
+[*]🪶 [b]Graceful fallback[/b]: consumer mods run on defaults if Config Manager isn't present
+[/list]
+
+[hr][/hr]
+[h1]👩‍💻 For Developers[/h1]
+Steps to use Config Manager:
+[olist]
+[*]Grab [url={{GITHUB_CLIENT_FILE_URL}}][b]ConfigManagerClient.cs[/b][/url] from the GitHub repo and drop it into your mod's [i]Data/Scripts[/i]
+[*]Create a config instance and add your settings (see below)
+[*]Call [b]Cfg.Register()[/b] in [i]LoadData[/i] and [b]Cfg.Unregister()[/b] in [i]UnloadData[/i]
+[*]Read values anywhere via [b].Value[/b], live and read-only
+[/olist]
+
+[b]Example usage[/b]
+[code]
+// MyModConfig.cs
+using ConfigManagerClient;
+
+static readonly ModConfig Cfg = new ModConfig("MyMod");
+
+public static readonly ConfigValue<float> Strength =
+    Cfg.Float("Strength").Default(8).Min(0).Max(100).Scope(ConfigScope.Server);
+
+public static readonly ConfigValue<bool> Enabled =
+    Cfg.Bool("Enabled").Default(true);   // Client scope by default
+
+// in LoadData:    Cfg.Register();
+// anywhere:       float s = Strength.Value;
+// in UnloadData:  Cfg.Unregister();
+[/code]
+
+[hr][/hr]
+[h1]🔗 Source[/h1]
+Repo: [url=https://github.com/the-official-egg/Config-Manager]https://github.com/the-official-egg/Config-Manager[/url]
+
+[hr][/hr]
+[h1]🙏 Credits[/h1]
+[list]
+[*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=1965654081]Rich HUD Framework[/url] by Dark Helmet: powers the in-game menu.
+[/list]
+
+[hr][/hr]
+[h1]🤖 AI Disclosure[/h1]
+AI assistance was used in the creation of some assets. All assets were human reviewed
