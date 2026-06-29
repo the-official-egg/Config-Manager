@@ -120,7 +120,6 @@ namespace ConfigSdk
             Log.Info($"Registered '{modId}' ({reg.Items.Count} items).");
         }
 
-        // ---------- permissions ----------
         public bool IsAdmin(ulong steamId)
         {
             if(steamId == 0)
@@ -132,15 +131,13 @@ namespace ConfigSdk
         public bool CanEdit(ConfigItem item, ulong steamId) =>
             item.Scope == ConfigScope.Client || IsAdmin(steamId);
 
-        // ---------- lookups ----------
         public bool TryGetItem(string modId, string key, out RegisteredMod reg, out ConfigItem item)
         {
             item = null;
             return Mods.TryGetValue(modId, out reg) && reg.Items.TryGetValue(key, out item);
         }
 
-        // ---------- set a value (entry point for chat command / menu) ----------
-        // Returns false + error if not allowed / invalid. Routes server-scope edits from clients to the server.
+        // Set a value (chat command / menu entry point); returns false + error if not allowed, routes server-scope edits from clients to the server.
         public bool RequestSetValue(string modId, string key, string valueText, ulong bySteamId, out string error)
         {
             error = null;
@@ -195,7 +192,6 @@ namespace ConfigSdk
                 _network.BroadcastServerConfig(reg);
         }
 
-        // ---------- reload from disk ----------
         public void ReloadAll(ulong bySteamId)
         {
             int totalChanges = 0;
@@ -207,12 +203,12 @@ namespace ConfigSdk
                 foreach(RegisteredMod reg in Mods.Values)
                     if(reg.HasScope(ConfigScope.Server))
                         _network.BroadcastServerConfig(reg);
-                Chat($"Reloaded config from disk — {totalChanges} value(s) changed.");
+                Chat($"Reloaded config from disk - {totalChanges} value(s) changed.");
             }
             else
             {
                 _network.SendReloadRequest(); // ask server to reload its files + rebroadcast (admin-gated server-side)
-                Chat($"Reloaded local client config — {totalChanges} value(s) changed. Requested server reload.");
+                Chat($"Reloaded local client config - {totalChanges} value(s) changed. Requested server reload.");
             }
         }
 
@@ -244,13 +240,12 @@ namespace ConfigSdk
                 }
                 else
                 {
-                    Chat($"{reg.ModId}.{c.Key}: {c.OldValue} -> {c.NewValue} — restart the world to apply.");
+                    Chat($"{reg.ModId}.{c.Key}: {c.OldValue} -> {c.NewValue} - restart the world to apply.");
                 }
             }
             return changes.Count;
         }
 
-        // ---------- chat helpers ----------
         public void NotifyChange(string modId, string key, string oldVal, string newVal)
         {
             Chat($"{modId}.{key}: {oldVal} -> {newVal}");

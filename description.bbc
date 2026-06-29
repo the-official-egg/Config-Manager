@@ -31,7 +31,7 @@ Don't have it installed? Mods that use Config Manager simply fall back to their 
 [h1]👩‍💻 For Developers[/h1]
 Steps to use Config Manager:
 [olist]
-[*]Grab [url={{GITHUB_CLIENT_FILE_URL}}][b]ConfigManagerClient.cs[/b][/url] from the GitHub repo and drop it into your mod's [i]Data/Scripts[/i]
+[*]Grab [b][url=https://github.com/the-official-egg/Config-Manager/blob/main/Data/Scripts/ConfigSdk/Shared/ConfigManagerClient.cs]ConfigManagerClient․cs[/url][/b] from the GitHub repo and drop it into your mod's [i]Data/Scripts[/i]
 [*]Create a config instance and add your settings (see below)
 [*]Call [b]Cfg.Register()[/b] in [i]LoadData[/i] and [b]Cfg.Unregister()[/b] in [i]UnloadData[/i]
 [*]Read values anywhere via [b].Value[/b], live and read-only

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Sandbox.ModAPI;
 
-// ConfigManagerClient — drop-in helper for the "Config Manager" mod (talks to it over ModMessage).
+// ConfigManagerClient - drop-in helper for the "Config Manager" mod (talks to it over ModMessage).
 // Not installed? Every value just stays at its Default, so your mod still works. Usage:
 //   static readonly ModConfig Cfg = new ModConfig("MyMod");
 //   public static readonly ConfigValue<float> Strength = Cfg.Float("Strength").Default(8).Min(0).Max(100).Scope(ConfigScope.Server);

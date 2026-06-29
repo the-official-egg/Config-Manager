@@ -6,9 +6,7 @@ using Sandbox.ModAPI;
 
 namespace ConfigSdk
 {
-    // ---- XML file model: one file per mod, with a Server and a Client section. ----
-    // Server/host: a single file in the world save holds both sections.
-    // Dedicated client: a local file holds only the Client section (server values arrive over the network).
+    // XML file model: one file per mod; server holds both Server and Client sections in the world save, clients keep a local Client-only file (server values arrive over the network).
     [XmlRoot("ModConfig")]
     public class ConfigFileData
     {
@@ -115,7 +113,7 @@ namespace ConfigSdk
             Value = item.CurrentString,
         };
 
-        // ---- low-level IO ----
+        // Low-level IO
         static ConfigFileData ReadWorld(string file)
         {
             try

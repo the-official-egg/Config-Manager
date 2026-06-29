@@ -8,8 +8,7 @@ using Sandbox.ModAPI;
 
 namespace ConfigSdk
 {
-    // Builds the Rich HUD terminal pages (one per registered mod) bound to the config registry.
-    // Editing routes through ConfigSdkSession.RequestSetValue, which enforces scope/admin/sync and persistence.
+    // Builds the Rich HUD terminal pages (one per mod); edits route through ConfigSdkSession.RequestSetValue.
     public class ConfigMenu
     {
         readonly ConfigSdkSession _s;
@@ -59,9 +58,7 @@ namespace ConfigSdk
             catch(Exception e) { Log.Error(e); }
         }
 
-        // RichHud lays CATEGORIES vertically but TILES (within a category) horizontally, and clamps each tile
-        // to ~280px (so a tile fits ~3 controls before squishing). To get a single vertical column, each chunk
-        // of controls becomes its own single-tile category; continuation chunks use a blank header.
+        // RichHud stacks categories vertically but tiles horizontally and clamps tile width, so each 3-control chunk becomes its own single-tile category to force one vertical column.
         const int ControlsPerTile = 3;
 
         ControlPage BuildPage(RegisteredMod reg, bool admin)
@@ -182,7 +179,7 @@ namespace ConfigSdk
             if(_s.RequestSetValue(reg.ModId, item.Key, text, Me, out err))
             {
                 if(item.RestartRequired)
-                    _s.Chat($"{reg.ModId}.{item.Key} changed — restart the world to apply.");
+                    _s.Chat($"{reg.ModId}.{item.Key} changed - restart the world to apply.");
             }
             else if(!string.IsNullOrEmpty(err))
             {
