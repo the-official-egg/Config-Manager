@@ -8,7 +8,7 @@ If this saved you time, you can [url=https://buymeacoffee.com/theegg]buy me a co
 [h1]📖 Description[/h1]
 Config Manager is a standalone utility mod that acts as a configuration backend for other mods. A mod registers its settings (name, type, range, default, and scope) and gets back live, type-safe values. Config Manager handles the rest:
 [list]
-[*][b]Persistent storage[/b]: each mod's settings are saved to an xml file, server values in the world save's Storage folder (SpaceEngineers\Saves\[save id]\Testing\Storage\Config Manager_ConfigSdk\[config name].xml), per-player values in your local SpaceEngineers Storage folder
+[*][b]Persistent storage[/b]: each mod's settings are saved to an xml file, server values in the world save's Storage folder (SpaceEngineers\Saves\[save id]\[world id]\Storage\Config Manager_ConfigSdk\[config name].xml), per-player values in your local SpaceEngineers Storage folder
 [*][b]Server/client split[/b]: server settings sync to all players and are admin-only; client settings are per-player
 [*][b]In-game menu[/b]: edit everything from a clean settings panel (via Rich HUD Framework)
 [/list]
