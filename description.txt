@@ -8,7 +8,7 @@ If this saved you time, you can [url=https://buymeacoffee.com/theegg]buy me a co
 [h1]📖 Description[/h1]
 Config Manager is a standalone utility mod that acts as a configuration backend for other mods. A mod registers its settings (name, type, range, default, and scope) and gets back live, type-safe values. Config Manager handles the rest:
 [list]
-[*][b]Persistent storage[/b]: each mod's settings are saved to an xml file, server values in the world save's Storage folder (SpaceEngineers\Saves\[save id]\[world id]\Storage\Config Manager_ConfigSdk\[config name].xml), per-player values in your local SpaceEngineers Storage folder
+[*][b]Persistent storage[/b]: each mod's settings are automatically saved to an xml file, server values in the world save's Storage folder (SpaceEngineers\Saves\[save id]\[world id]\Storage\Config Manager_ConfigSdk\[config name].xml), per-player values in your local SpaceEngineers Storage folder
 [*][b]Server/client split[/b]: server settings sync to all players and are admin-only; client settings are per-player
 [*][b]In-game menu[/b]: edit everything from a clean settings panel (via Rich HUD Framework)
 [/list]
@@ -23,7 +23,7 @@ Don't have it installed? Mods that use Config Manager simply fall back to their 
 [*]🖥️ [b][url=https://steamcommunity.com/sharedfiles/filedetails/?id=1965654081]Rich HUD[/url] integration[/b]: edit settings in-game from the F2 menu (optional, not required)
 [*]🔁 [b]Live reload[/b]: non-restart values apply instantly; [b]/configreload[/b] re-reads files on demand
 [*]♻️ [b]Restart-aware[/b]: values can be flagged "restart required"; the menu marks them and warns on change
-[*]📂 [b]Readable XML files[/b]: one file per mod, with separate Server and Client sections
+[*]📂 [b]Config file Creation[/b]: A config file is automatically generated for each mod
 [*]🪶 [b]Graceful fallback[/b]: consumer mods run on defaults if Config Manager isn't present
 [/list]
 
@@ -54,6 +54,13 @@ public static readonly ConfigValue<bool> Enabled =
 // anywhere:       float s = Strength.Value;
 // in UnloadData:  Cfg.Unregister();
 [/code]
+
+[hr][/hr]
+[h1]⚠️ Warnings[/h1]
+[list]
+[*]This mod has only been tested in single player. The multiplayer and dedicated server code should work, but hasn't been verified in a live session
+[*]Found a bug? Please report it on the mod page so I can get it fixed.
+[/list]
 
 [hr][/hr]
 [h1]🔗 Source[/h1]
