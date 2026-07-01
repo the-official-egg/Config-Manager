@@ -226,6 +226,85 @@ namespace ConfigSdk
             }
         }
 
+        // Reset every value to its default. Client-scope resets locally; server-scope resets on the server (a client admin asks the server to reset + rebroadcast).
+        public void ResetAll(ulong bySteamId)
+        {
+            bool admin = IsAdmin(bySteamId);
+            int totalChanges = 0;
+            foreach(RegisteredMod reg in Mods.Values)
+                totalChanges += ResetMod(reg, serverScopeOnly: false);
+
+            if(IsServer)
+            {
+                Chat($"Reset config to defaults - {totalChanges} value(s) changed.");
+            }
+            else
+            {
+                if(admin)
+                    _network.SendResetRequest(); // ask server to reset its server-scope values + rebroadcast (admin-gated server-side)
+                Chat($"Reset local client config to defaults - {totalChanges} value(s) changed." + (admin ? " Requested server reset." : ""));
+            }
+        }
+
+        // server-side: reset server-scope values to defaults and push to all clients (admin only); leaves each client's own client-scope values untouched
+        public void ServerResetAndBroadcast(ulong bySteamId)
+        {
+            if(!IsServer || !IsAdmin(bySteamId))
+                return;
+            foreach(RegisteredMod reg in Mods.Values)
+            {
+                if(!reg.HasScope(ConfigScope.Server))
+                    continue;
+                if(ResetMod(reg, serverScopeOnly: true) > 0)
+                    _network.BroadcastServerConfig(reg);
+            }
+        }
+
+        // Reset this mod's items to their defaults. Server-scope items are only touched on the server; serverScopeOnly skips client-scope items (used for the server-side remote reset).
+        int ResetMod(RegisteredMod reg, bool serverScopeOnly)
+        {
+            int changed = 0;
+            bool serverChanged = false;
+
+            foreach(ConfigItem item in reg.Items.Values)
+            {
+                if(item.Scope == ConfigScope.Server)
+                {
+                    if(!IsServer) continue; // server-scope resets happen on the server
+                }
+                else if(serverScopeOnly)
+                {
+                    continue;
+                }
+
+                string oldStr = item.CurrentString;
+                string newStr = item.DefaultString;
+                if(oldStr == newStr)
+                    continue; // already at default
+
+                item.Current = item.Default;
+                changed++;
+
+                if(item.RestartRequired)
+                {
+                    Chat($"{reg.ModId}.{item.Key}: {oldStr} -> {newStr} - restart the world to apply.");
+                    continue; // persisted below; loads on next world start
+                }
+
+                reg.Push(item); // apply live
+                NotifyChange(reg.ModId, item.Key, oldStr, newStr);
+                if(item.Scope == ConfigScope.Server)
+                    serverChanged = true;
+            }
+
+            if(changed > 0)
+                ConfigStorage.Save(reg);
+            if(serverChanged && IsServer && !serverScopeOnly)
+                _network.BroadcastServerConfig(reg); // ResetAll on a listen host; the remote-request path broadcasts in ServerResetAndBroadcast
+
+            return changed;
+        }
+
         int ReloadMod(RegisteredMod reg)
         {
             List<ConfigChange> changes = ConfigStorage.Load(reg);

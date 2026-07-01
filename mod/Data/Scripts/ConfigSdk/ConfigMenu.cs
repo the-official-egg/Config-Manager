@@ -81,16 +81,19 @@ namespace ConfigSdk
             AddScope(page, "Server settings", admin ? "Applies to everyone (admin)" : "Applies to everyone (admin-only)", serverControls);
             AddScope(page, "Client settings", "Your local settings", clientControls);
 
-            // reload button in its own row at the bottom
-            ControlTile reloadTile = new ControlTile();
+            // reload + reset buttons in their own row at the bottom
+            ControlTile actionsTile = new ControlTile();
             TerminalButton reloadBtn = new TerminalButton() { Name = "Reload from file" };
             reloadBtn.ControlChangedHandler = (s, a) => _s.ReloadAll(Me);
-            reloadTile.Add(reloadBtn);
-            ControlCategory reloadCat = new ControlCategory();
-            reloadCat.HeaderText = "";
-            reloadCat.SubheaderText = "";
-            reloadCat.TileContainer.Add(reloadTile);
-            page.CategoryContainer.Add(reloadCat);
+            actionsTile.Add(reloadBtn);
+            TerminalButton resetBtn = new TerminalButton() { Name = "Reset to defaults" };
+            resetBtn.ControlChangedHandler = (s, a) => _s.ResetAll(Me);
+            actionsTile.Add(resetBtn);
+            ControlCategory actionsCat = new ControlCategory();
+            actionsCat.HeaderText = "";
+            actionsCat.SubheaderText = "";
+            actionsCat.TileContainer.Add(actionsTile);
+            page.CategoryContainer.Add(actionsCat);
 
             return page;
         }

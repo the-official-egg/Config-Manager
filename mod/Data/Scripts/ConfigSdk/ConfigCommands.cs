@@ -3,7 +3,7 @@ using Sandbox.ModAPI;
 
 namespace ConfigSdk
 {
-    // Only /configreload remains; viewing and editing config is done in the Rich HUD menu.
+    // /configreload and /configreset; viewing and editing config is done in the Rich HUD menu.
     public class ConfigCommands
     {
         readonly ConfigSdkSession _s;
@@ -29,6 +29,12 @@ namespace ConfigSdk
                     sendToOthers = false;
                     ulong me = MyAPIGateway.Session?.Player?.SteamUserId ?? 0;
                     _s.ReloadAll(me);
+                }
+                else if(t.Equals("/configreset", StringComparison.OrdinalIgnoreCase) || t.StartsWith("/configreset ", StringComparison.OrdinalIgnoreCase))
+                {
+                    sendToOthers = false;
+                    ulong me = MyAPIGateway.Session?.Player?.SteamUserId ?? 0;
+                    _s.ResetAll(me);
                 }
             }
             catch(Exception e) { Log.Error(e); }

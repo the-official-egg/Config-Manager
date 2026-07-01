@@ -9,6 +9,7 @@ namespace ConfigSdk.Sync
     [ProtoInclude(11, typeof(ServerConfigPacket))]
     [ProtoInclude(12, typeof(SetServerValuePacket))]
     [ProtoInclude(13, typeof(ReloadServerPacket))]
+    [ProtoInclude(14, typeof(ResetServerPacket))]
     public abstract partial class PacketBase
     {
         [ProtoMember(1)] public ulong OriginalSenderSteamId;
@@ -99,6 +100,19 @@ namespace ConfigSdk.Sync
         }
     }
 
+    // client(admin) -> server: reset server-scope values to defaults and rebroadcast
+    [ProtoContract]
+    public class ResetServerPacket : PacketBase
+    {
+        public override void Received(ref RelayMode relay, ulong senderSteamId)
+        {
+            ConfigSdkSession s = ConfigSdkSession.Instance;
+            if(s == null || !s.IsServer) return;
+            if(!s.IsAdmin(OriginalSenderSteamId)) return;
+            s.ServerResetAndBroadcast(OriginalSenderSteamId);
+        }
+    }
+
     // Thin wrapper around Networking with config-specific helpers.
     public class ConfigNetwork
     {
@@ -116,6 +130,7 @@ namespace ConfigSdk.Sync
         public void RequestServerConfig(string modId) { _net.SendToServer(new RequestServerConfigPacket(modId)); }
         public void SendSetServerValue(string modId, string key, string value) { _net.SendToServer(new SetServerValuePacket(modId, key, value)); }
         public void SendReloadRequest() { _net.SendToServer(new ReloadServerPacket()); }
+        public void SendResetRequest() { _net.SendToServer(new ResetServerPacket()); }
 
         // server -> client(s)
         public void SendServerConfigTo(RegisteredMod reg, ulong steamId) { _net.SendToPlayer(Build(reg), steamId); }

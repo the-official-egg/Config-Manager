@@ -22,6 +22,7 @@ Don't have it installed? Mods that use Config Manager simply fall back to their 
 [*]🌐 [b]Server ↔ Client sync[/b]: server-authoritative, admin-gated edits, automatic multiplayer sync
 [*]🖥️ [b][url=https://steamcommunity.com/sharedfiles/filedetails/?id=1965654081]Rich HUD[/url] integration[/b]: edit settings in-game from the F2 menu (optional, not required)
 [*]🔁 [b]Live reload[/b]: non-restart values apply instantly; [b]/configreload[/b] re-reads files on demand
+[*]♻️ [b]Reset to defaults[/b]: restore every setting to its default with [b]/configreset[/b] or the "Reset to defaults" button in the menu
 [*]♻️ [b]Restart-aware[/b]: values can be flagged "restart required"; the menu marks them and warns on change
 [*]📂 [b]Config file Creation[/b]: A config file is automatically generated for each mod
 [*]🪶 [b]Graceful fallback[/b]: consumer mods run on defaults if Config Manager isn't present
@@ -59,6 +60,7 @@ public static readonly ConfigValue<bool> Enabled =
 [h1]⚠️ Warnings[/h1]
 [list]
 [*]This mod has only been tested in single player. The multiplayer and dedicated server code should work, but hasn't been verified in a live session
+[*]The menu's layout can look a bit odd - that's down to how Rich HUD arranges elements and is out of my hands until Rich HUD itself changes
 [*]Found a bug? Please report it on the mod page so I can get it fixed.
 [/list]
 
