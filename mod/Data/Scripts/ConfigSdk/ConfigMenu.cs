@@ -120,7 +120,7 @@ namespace ConfigSdk
             {
                 case CType.Bool:
                 {
-                    TerminalCheckbox cb = new TerminalCheckbox() { Name = DisplayName(item) };
+                    TerminalCheckbox cb = new TerminalCheckbox() { Name = DisplayName(item), Value = (bool)item.Current };
                     cb.CustomValueGetter = () => (bool)item.Current;
                     cb.ControlChangedHandler = (s, a) =>
                     {
@@ -141,6 +141,7 @@ namespace ConfigSdk
                         Name = DisplayName(item),
                         Min = (float)item.Min,
                         Max = (float)item.Max,
+                        Value = ToFloat(item.Current),
                         ValueText = item.CurrentString,
                     };
                     sl.CustomValueGetter = () => ToFloat(item.Current);
@@ -163,7 +164,7 @@ namespace ConfigSdk
 
         TerminalTextField TextField(RegisteredMod reg, ConfigItem item, bool editable)
         {
-            TerminalTextField tf = new TerminalTextField() { Name = DisplayName(item) };
+            TerminalTextField tf = new TerminalTextField() { Name = DisplayName(item), Value = item.CurrentString };
             tf.CustomValueGetter = () => item.CurrentString;
             tf.ControlChangedHandler = (s, a) =>
             {
@@ -178,6 +179,12 @@ namespace ConfigSdk
         // single entry point for menu edits: applies via the SDK, then warns if a restart is needed
         void Set(RegisteredMod reg, ConfigItem item, string text)
         {
+            // ignore no-op writes: Rich HUD fires ControlChanged on init/refresh, not just on user edits
+            bool parseOk;
+            object parsed = item.Parse(text, out parseOk);
+            if(parseOk && item.Format(parsed) == item.CurrentString)
+                return;
+
             string err;
             if(_s.RequestSetValue(reg.ModId, item.Key, text, Me, out err))
             {
