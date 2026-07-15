@@ -103,7 +103,8 @@ namespace ConfigSdk
                 string key = it[0] as string;
                 if(string.IsNullOrEmpty(key)) continue;
                 bool restart = it.Length >= 8 && it[7] is bool && (bool)it[7];
-                reg.Items[key] = new ConfigItem(key, (int)it[1], (int)it[2], it[3], (bool)it[4], (double)it[5], (double)it[6], restart);
+                double step = (it.Length >= 9 && it[8] is double) ? (double)it[8] : 0.0;
+                reg.Items[key] = new ConfigItem(key, (int)it[1], (int)it[2], it[3], (bool)it[4], (double)it[5], (double)it[6], restart, step);
             }
 
             Mods[modId] = reg;

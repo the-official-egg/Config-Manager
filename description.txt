@@ -19,6 +19,7 @@ Don't have it installed? Mods that use Config Manager simply fall back to their 
 [h1]✨ Features[/h1]
 [list]
 [*]🧩 [b]Type-safe config[/b]: bool, int, float, double, string, each with optional min/max ranges
+[*]🎚️ [b]Slider steps[/b]: numeric ranges in the menu have customizable increment (via [b].Step()[/b])
 [*]🌐 [b]Server ↔ Client sync[/b]: server-authoritative, admin-gated edits, automatic multiplayer sync
 [*]🖥️ [b][url=https://steamcommunity.com/sharedfiles/filedetails/?id=1965654081]Rich HUD[/url] integration[/b]: edit settings in-game from the F2 menu (optional, not required)
 [*]🔁 [b]Live reload[/b]: non-restart values apply instantly; [b]/configreload[/b] re-reads files on demand
@@ -47,6 +48,7 @@ static readonly ModConfig Cfg = new ModConfig("MyMod");
 
 public static readonly ConfigValue<float> Strength =
     Cfg.Float("Strength").Default(8).Min(0).Max(100).Scope(ConfigScope.Server);
+    // optional: .Step(5) sets the menu slider increment (defaults to 1 here, two orders of magnitude below Max)
 
 public static readonly ConfigValue<bool> Enabled =
     Cfg.Bool("Enabled").Default(true);   // Client scope by default

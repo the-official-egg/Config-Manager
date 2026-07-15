@@ -9,6 +9,7 @@ using Sandbox.ModAPI;
 //   Cfg.Register() in LoadData  ·  float s = Strength.Value  ·  Cfg.Unregister() in UnloadData
 // Scope: Client = per-player local file · Server = world save, synced, admin-only edits.
 // RestartRequired() = change applies only after a world reload (the menu warns). Default false.
+// Step(x) = menu slider increment (UI only, not a hard limit); defaults to two orders of magnitude below Max.
 namespace ConfigManagerClient
 {
     public enum ConfigScope { Client = 0, Server = 1 }
@@ -28,7 +29,7 @@ namespace ConfigManagerClient
         internal class Entry
         {
             public string Key; public int Type; public int Scope; public object Default;
-            public bool HasRange; public double Min, Max; public bool Restart;
+            public bool HasRange; public double Min, Max; public bool Restart; public double Step;
             public Action<object> Apply;
         }
 
@@ -85,7 +86,7 @@ namespace ConfigManagerClient
             for(int i = 0; i < _entries.Count; i++)
             {
                 var e = _entries[i];
-                items[i] = new object[] { e.Key, e.Type, e.Scope, e.Default, e.HasRange, e.Min, e.Max, e.Restart };
+                items[i] = new object[] { e.Key, e.Type, e.Scope, e.Default, e.HasRange, e.Min, e.Max, e.Restart, e.Step };
             }
             object cb = new Action<string, object>((key, val) => { Entry e; if(key != null && _byKey.TryGetValue(key, out e)) e.Apply(val); });
             MyAPIGateway.Utilities.SendModMessage(Channel, new object[] { Msg_Register, Ver, _id, items, cb });
@@ -100,6 +101,8 @@ namespace ConfigManagerClient
         public ConfigBuilder<T> Min(double x) { _e.Min = x; _e.HasRange = true; return this; }
         public ConfigBuilder<T> Max(double x) { _e.Max = x; _e.HasRange = true; return this; }
         public ConfigBuilder<T> Scope(ConfigScope s) { _e.Scope = (int)s; return this; }
+        // Slider increment shown in the in-game menu (UI only, not a hard limit). Omit to default to two orders of magnitude below Max.
+        public ConfigBuilder<T> Step(double x) { _e.Step = x; return this; }
         public ConfigBuilder<T> RestartRequired(bool v = true) { _e.Restart = v; return this; }
         public ConfigValue<T> Value => _v;
         public static implicit operator ConfigValue<T>(ConfigBuilder<T> b) => b._v;

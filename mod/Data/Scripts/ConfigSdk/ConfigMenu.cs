@@ -148,9 +148,12 @@ namespace ConfigSdk
                     sl.ControlChangedHandler = (s, a) =>
                     {
                         TerminalSlider slider = (TerminalSlider)s;
+                        // snap the slider's continuous value to the configured step for display/edit;
+                        // the underlying value can still hold off-step numbers (set via chat/text field)
+                        double snapped = Snap(slider.Value, item);
                         string text = (item.Type == CType.Int)
-                            ? ((int)Math.Round(slider.Value)).ToString(CultureInfo.InvariantCulture)
-                            : slider.Value.ToString("0.###", CultureInfo.InvariantCulture);
+                            ? ((int)Math.Round(snapped)).ToString(CultureInfo.InvariantCulture)
+                            : snapped.ToString("0.#######", CultureInfo.InvariantCulture);
                         slider.ValueText = text;
                         if(editable) Set(reg, item, text);
                     };
@@ -203,6 +206,19 @@ namespace ConfigSdk
             if(o is int) return (int)o;
             if(o is double) return (float)(double)o;
             return 0f;
+        }
+
+        // Round a slider value to the nearest step off Min, clamped to the range. Step 0 leaves the value untouched.
+        static double Snap(double value, ConfigItem item)
+        {
+            double step = item.Step;
+            if(step <= 0)
+                return value;
+
+            double snapped = item.Min + Math.Round((value - item.Min) / step) * step;
+            if(snapped < item.Min) snapped = item.Min;
+            if(snapped > item.Max) snapped = item.Max;
+            return snapped;
         }
     }
 }

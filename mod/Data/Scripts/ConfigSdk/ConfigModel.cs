@@ -33,11 +33,12 @@ namespace ConfigSdk
         public readonly bool HasRange;
         public readonly double Min;
         public readonly double Max;
+        public readonly double Step; // UI-only slider increment; not a hard constraint on the value
         public readonly bool RestartRequired; // value change only takes effect after a world reload
 
         public object Current;
 
-        public ConfigItem(string key, int type, int scope, object def, bool hasRange, double min, double max, bool restartRequired)
+        public ConfigItem(string key, int type, int scope, object def, bool hasRange, double min, double max, bool restartRequired, double step = 0)
         {
             Key = key;
             Type = type;
@@ -47,7 +48,28 @@ namespace ConfigSdk
             Min = min;
             Max = max;
             RestartRequired = restartRequired;
+            Step = ComputeStep(type, hasRange, max, step);
             Current = def;
+        }
+
+        // Slider increment for the menu. Uses the caller-supplied step when positive; otherwise defaults to
+        // two orders of magnitude below the max (max 1 -> 0.01, max 20 -> 0.1, max 500 -> 1). Ints step by >= 1.
+        static double ComputeStep(int type, bool hasRange, double max, double step)
+        {
+            if(step > 0)
+            {
+                if(type == CType.Int && step < 1)
+                    return 1;
+                return step;
+            }
+
+            double d = (hasRange && max > 0)
+                ? Math.Pow(10, Math.Floor(Math.Log10(max)) - 2)
+                : 1;
+
+            if(type == CType.Int && d < 1)
+                d = 1;
+            return d;
         }
 
         public string CurrentString => Format(Current);
